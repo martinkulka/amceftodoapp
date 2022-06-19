@@ -12,3 +12,5 @@ export interface TodosList {
     todos: Todo[];
     id: number;
 }
+
+export type TodoFilter = "all" | "finished" | "unfinished"
