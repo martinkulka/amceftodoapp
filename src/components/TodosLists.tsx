@@ -1,4 +1,5 @@
-import { Box, Link, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/DeleteTwoTone";
+import { Box, IconButton, Link } from "@mui/material";
 import { useEffect, useState } from "react";
 import gsAxios from "../api";
 import { TodosList } from "../types";
@@ -6,25 +7,35 @@ import TodoListForm from "./TodoListForm";
 
 const TodosLists = () => {
   const [lists, setLists] = useState<TodosList[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchLists();
   }, []);
 
   const fetchLists = () => {
-    setLoading(true);
-
     gsAxios.get<TodosList[]>("/todoslist").then((response) => {
       console.log(response.data);
       setLists(response.data);
-      setLoading(false);
     });
   };
 
-  /* const handleCreateList = (listName: string) => {
-    
-  }; */
+  const handleCreateList = (name: string) => {
+    gsAxios
+      .post<TodosList>("/todoslist", {
+        name,
+      })
+      .then((response) => {
+        console.log(response.data);
+        fetchLists();
+      });
+  };
+
+  const handleDeleteList = (id: number) => {
+    gsAxios.delete<TodosList>(`/todoslist/${id}`).then((response) => {
+      console.log(response.data);
+      fetchLists();
+    });
+  };
 
   return (
     <Box
@@ -35,29 +46,21 @@ const TodosLists = () => {
       m={2}
       pt={3}
     >
-      {loading ? (
-        <Typography variant="h2">Loading...</Typography>
-      ) : (
-        <Box display="flex" flexDirection="column" alignItems="center">
-          {lists.length === 0 ? (
-            <Typography variant="h4">
-              No lists available, create some!
-            </Typography>
-          ) : (
-            <></>
-          )}
-          {lists.map((todoList) => {
-            return (
-              <div className="todolist-container" key={todoList.id}>
-                <Link href={`/${todoList.id}`} variant="h4">
-                  {todoList.name}
-                </Link>
-              </div>
-            );
-          })}
-          <TodoListForm />
-        </Box>
-      )}
+      <Box display="flex" flexDirection="column" alignItems="center">
+        {lists.map((todoList) => {
+          return (
+            <div className="todolist-container" key={todoList.id}>
+              <Link href={`/${todoList.id}`} variant="h4">
+                {todoList.name}
+              </Link>
+              <IconButton onClick={() => handleDeleteList(todoList.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          );
+        })}
+        <TodoListForm handleCreateList={handleCreateList} />
+      </Box>
     </Box>
   );
 };

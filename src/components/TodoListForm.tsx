@@ -1,9 +1,13 @@
 import { Box, Button, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 
-const TodoListForm = () => {
+interface props {
+  handleCreateList: (listName: string) => void;
+}
+
+const TodoListForm = ({ handleCreateList }: props) => {
   const { control, handleSubmit } = useForm();
-  const onSubmit = handleSubmit((data) => console.log(data));
+  const onSubmit = handleSubmit((data) => handleCreateList(data.listName));
 
   return (
     <form onSubmit={onSubmit}>
@@ -26,7 +30,7 @@ const TodoListForm = () => {
               onChange={onChange}
               error={!!error}
               helperText={error ? error.message : null}
-              sx={{ width: "50vw" }}
+              sx={{ width: "30vw" }}
             />
           )}
           rules={{ required: "Name required" }}
