@@ -30,7 +30,7 @@ const TodoListForm = ({ handleCreateList }: props) => {
               onChange={onChange}
               error={!!error}
               helperText={error ? error.message : null}
-              sx={{ width: "30vw" }}
+              sx={{ width: "50vw" }}
             />
           )}
           rules={{ required: "Name required" }}

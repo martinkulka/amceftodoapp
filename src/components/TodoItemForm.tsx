@@ -34,7 +34,7 @@ const TodoItemForm = ({ parentId, handleAddItem }: props) => {
                 onChange={onChange}
                 error={!!error}
                 helperText={error ? error.message : null}
-                sx={{ width: "30vw" }}
+                sx={{ width: "50vw" }}
               />
             )}
             rules={{ required: "Title required" }}
@@ -51,7 +51,7 @@ const TodoItemForm = ({ parentId, handleAddItem }: props) => {
                 onChange={onChange}
                 error={!!error}
                 helperText={error ? error.message : null}
-                sx={{ width: "30vw" }}
+                sx={{ width: "50vw" }}
               />
             )}
             rules={{ required: "Comment required" }}
@@ -69,7 +69,7 @@ const TodoItemForm = ({ parentId, handleAddItem }: props) => {
                     variant="filled"
                     error={!!error}
                     helperText={error ? error.message : null}
-                    sx={{ width: "30vw" }}
+                    sx={{ width: "50vw" }}
                   />
                 )}
                 value={value}

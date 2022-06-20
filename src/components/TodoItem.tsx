@@ -12,7 +12,7 @@ interface props {
 
 const Item = styled(Paper)(() => ({
   textAlign: "center",
-  width: "30vw",
+  width: "50vw",
 }));
 
 const TodoItem = ({ data, handleDeleteItem, handleCheckFinished }: props) => {

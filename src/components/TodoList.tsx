@@ -105,7 +105,7 @@ const TodoList = () => {
           variant="filled"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          sx={{ paddingBottom: "4vh", width: "30vw" }}
+          sx={{ paddingBottom: "4vh", width: "50vw" }}
         />
       )}
       <Stack spacing={1} justifyContent="center" alignItems="center">
