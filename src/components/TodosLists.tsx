@@ -49,14 +49,14 @@ const TodosLists = () => {
       <Box display="flex" flexDirection="column" alignItems="center">
         {lists.map((todoList) => {
           return (
-            <div className="todolist-container" key={todoList.id}>
+            <Box key={todoList.id}>
               <Link href={`/${todoList.id}`} variant="h4">
                 {todoList.name}
               </Link>
               <IconButton onClick={() => handleDeleteList(todoList.id)}>
                 <DeleteIcon />
               </IconButton>
-            </div>
+            </Box>
           );
         })}
         <TodoListForm handleCreateList={handleCreateList} />
