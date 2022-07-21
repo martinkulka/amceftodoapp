@@ -23,11 +23,14 @@ const slice = createSlice({
     },
     setLists: (state, action: PayloadAction<TodosList[]>) => {
       state.lists = action.payload;
-      state.maxId = findMaxId(action.payload);
+      state.maxId = Number(findMaxId(action.payload));
       state.loading = false;
     },
+    addListFetch: (state, action: PayloadAction<string>) => {
+      state.loading = true;
+    },
     addList: (state, action: PayloadAction<string>) => {
-      const newId = findMaxId(state.lists) + 1;
+      const newId = Number(findMaxId(state.lists)) + 1;
       const list = {
         name: action.payload,
         id: newId,
@@ -35,16 +38,28 @@ const slice = createSlice({
 
       state.lists.push(list);
       state.maxId = newId;
+      state.loading = false;
+    },
+    deleteListFetch: (state, action: PayloadAction<number>) => {
+      state.loading = true;
     },
     deleteList: (state, action: PayloadAction<number>) => {
-      const index = state.lists.findIndex((list) => list.id == action.payload);
+      const filtered = state.lists.filter((list) => list.id !== action.payload);
 
-      state.lists = state.lists.splice(index, 1);
-      state.maxId = findMaxId(state.lists);
+      state.lists = filtered;
+      state.maxId = Number(findMaxId(filtered));
+      state.loading = false;
     },
   },
 });
 
-export const { getListsFetch, setLists, addList, deleteList } = slice.actions;
+export const {
+  getListsFetch,
+  setLists,
+  addList,
+  addListFetch,
+  deleteList,
+  deleteListFetch,
+} = slice.actions;
 
 export default slice.reducer;

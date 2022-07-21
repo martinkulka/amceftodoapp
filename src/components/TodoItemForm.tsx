@@ -2,15 +2,27 @@ import { Box, Button, TextField } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { useAppDispatch } from "../app/hooks";
+import { TodoAddPayload } from "../types";
+import { addTodoFetch } from "../features/todos/todoSlice";
 
 interface props {
   parentId: string | undefined;
-  handleAddItem: (parentId: string | undefined, title: string, comment: string, deadline: Date) => void;
 }
 
-const TodoItemForm = ({ parentId, handleAddItem }: props) => {
+const TodoItemForm = ({ parentId }: props) => {
+  const dispatch = useAppDispatch();
   const { control, handleSubmit } = useForm();
-  const onSubmit = handleSubmit((data) => handleAddItem(parentId, data.title, data.comment, data.deadline));
+  const onSubmit = handleSubmit((data) => {
+    const todo = {
+      title: data.title,
+      comment: data.comment,
+      deadline: data.deadline.toISOString(),
+      todoslistId: Number(parentId),
+    } as TodoAddPayload;
+
+    dispatch(addTodoFetch(todo));
+  });
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>

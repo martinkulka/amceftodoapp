@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Todo } from "../../types";
+import {
+  Todo,
+  TodoAddPayload,
+  TodoChangeFinishedPayload,
+  TodoDeletePayload,
+} from "../../types";
 import { findMaxId } from "../../utils/findMaxId";
 
 interface TodoState {
@@ -18,37 +23,79 @@ const slice = createSlice({
   name: "todos",
   initialState,
   reducers: {
-    getTodosFetch: (state) => {
+    getTodosFetch: (state, _action) => {
       state.loading = true;
     },
     setTodos: (state, action: PayloadAction<Todo[]>) => {
       state.todos = action.payload;
-      state.maxId = findMaxId(state.todos);
+      state.maxId = Number(findMaxId(state.todos));
       state.loading = false;
     },
-    addTodo: (state, action: PayloadAction<Todo>) => {
-      const todo = action.payload;
-      const newId = findMaxId(state.todos) + 1;
+    addTodoFetch: (state, action: PayloadAction<TodoAddPayload>) => {
+      state.loading = true;
+    },
+    addTodo: (state, action: PayloadAction<TodoAddPayload>) => {
+      const newId = Number(findMaxId(state.todos)) + 1;
+      const todo = {
+        title: action.payload.title,
+        comment: action.payload.comment,
+        deadline: action.payload.deadline,
+        finished: false,
+        id: newId,
+        todoslistId: action.payload.todoslistId,
+      } as Todo;
 
-      todo.id = newId;
-      state.todos.push(action.payload);
+      state.todos.push(todo);
       state.maxId = newId;
+      state.loading = false;
     },
-    deleteTodo: (state, action: PayloadAction<number>) => {
-      const index = state.todos.findIndex((todo) => todo.id == action.payload);
-
-      state.todos = state.todos.splice(index, 1);
-      state.maxId = findMaxId(state.todos);
+    deleteTodoFetch: (state, action: PayloadAction<TodoDeletePayload>) => {
+      state.loading = true;
     },
-    changeFinished: (state, action: PayloadAction<number>) => {
-      const index = state.todos.findIndex((todo) => todo.id == action.payload);
+    deleteTodo: (state, action: PayloadAction<TodoDeletePayload>) => {
+      const filtered = state.todos.filter(
+        (todo) => todo.id !== action.payload.id
+      );
 
-      state.todos[index].finished = !state.todos[index].finished;
+      state.todos = filtered;
+      state.maxId = Number(findMaxId(state.todos));
+      state.loading = false;
+    },
+    changeFinishedFetch: (
+      state,
+      action: PayloadAction<TodoChangeFinishedPayload>
+    ) => {
+      state.loading = true;
+    },
+    changeFinished: (
+      state,
+      action: PayloadAction<TodoChangeFinishedPayload>
+    ) => {
+      const changedTodosState = state.todos.map((todo) => {
+        if (todo.id === action.payload.id) {
+          return {
+            ...todo,
+            finished: !todo.finished,
+          };
+        }
+
+        return todo;
+      });
+      state.todos = changedTodosState;
+      state.loading = false;
     },
   },
 });
 
-export const { getTodosFetch, setTodos, addTodo, deleteTodo, changeFinished } =
-  slice.actions;
+export const {
+  getTodosFetch,
+  setTodos,
+  addTodo,
+  addTodoFetch,
+  deleteTodo,
+  deleteTodoFetch,
+  changeFinished,
+  changeFinishedFetch,
+} = slice.actions;
 
 export default slice.reducer;

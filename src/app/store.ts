@@ -5,11 +5,10 @@ import { undoable } from "redux-undo-action";
 import createSagaMiddleware from "redux-saga";
 import { all } from "redux-saga/effects";
 import watchTodoListSaga from "../features/todolists/todoListSaga";
+import watchTodoSaga from "../features/todos/todoSaga";
 
 function* rootSaga() {
-  yield all([
-    watchTodoListSaga(),
-  ])
+  yield all([watchTodoListSaga(), watchTodoSaga()]);
 }
 
 const saga = createSagaMiddleware();
