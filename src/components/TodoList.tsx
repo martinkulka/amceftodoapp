@@ -7,74 +7,28 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import gsAxios from "../api";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getTodosFetch } from "../features/todos/todoSlice";
 import { Todo, TodoFilter } from "../types";
 import TodoItem from "./TodoItem";
 import TodoItemForm from "./TodoItemForm";
 
 const TodoList = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const dispatch = useAppDispatch();
+  const todos = useAppSelector((state) => state.todos.todos) as Todo[];
   const [query, setQuery] = useState<string>("");
   const [filter, setFilter] = useState<TodoFilter>("all");
   const { listId } = useParams<string>();
 
   useEffect(() => {
-    fetchTodos(listId);
-  }, []);
+    dispatch(getTodosFetch(listId));
+  }, [dispatch]);
 
   const handleFilterChange = (
     event: React.MouseEvent<HTMLElement>,
     newFilter: TodoFilter
   ) => {
     setFilter(newFilter);
-  };
-
-  const fetchTodos = (listId: string | undefined) => {
-    gsAxios.get<Todo[]>(`/todoslist/${listId}/todos`).then((response) => {
-      console.log(response.data);
-      setTodos(response.data);
-    });
-  };
-
-  const handleDeleteItem = (parentId: number, itemId: number) => {
-    gsAxios
-      .delete<Todo>(`/todoslist/${parentId}/todos/${itemId}`)
-      .then((response) => {
-        console.log(response.data);
-        fetchTodos(parentId.toString());
-      });
-  };
-
-  const handleAddItem = (
-    parentId: string | undefined,
-    title: string,
-    comment: string,
-    deadline: Date
-  ) => {
-    gsAxios
-      .post<Todo>(`/todoslist/${parentId}/todos`, {
-        title,
-        comment,
-        deadline: deadline.toISOString(),
-      })
-      .then((response) => {
-        console.log(response.data);
-        fetchTodos(parentId);
-      });
-  };
-
-  const handleCheckFinished = (parentId: number, itemId: number) => {
-    const filteredItem = todos.filter((todo) => todo.id == itemId)[0];
-
-    gsAxios
-      .put<Todo>(`/todoslist/${parentId}/todos/${itemId}`, {
-        ...filteredItem,
-        finished: !filteredItem.finished,
-      })
-      .then((response) => {
-        console.log(response.data);
-        fetchTodos(parentId.toString());
-      });
   };
 
   return (
@@ -115,25 +69,18 @@ const TodoList = () => {
           )
           .filter((todo) => {
             if (filter === "finished") {
-              return todo.finished
+              return todo.finished;
             } else if (filter === "unfinished") {
-              return !todo.finished
+              return !todo.finished;
             } else {
               return todo;
             }
           })
           .map((todo) => {
-            return (
-              <TodoItem
-                data={todo}
-                handleDeleteItem={handleDeleteItem}
-                handleCheckFinished={handleCheckFinished}
-                key={todo.id}
-              />
-            );
+            return <TodoItem data={todo} key={todo.id} />;
           })}
       </Stack>
-      <TodoItemForm parentId={listId} handleAddItem={handleAddItem} />
+      <TodoItemForm parentId={listId} />
     </Box>
   );
 };

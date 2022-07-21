@@ -1,13 +1,16 @@
 import DeleteIcon from "@mui/icons-material/DeleteTwoTone";
-import CheckIcon from '@mui/icons-material/Check';
+import CheckIcon from "@mui/icons-material/Check";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
-import { Todo } from "../types";
+import { Todo, TodoChangeFinishedPayload, TodoDeletePayload } from "../types";
 import { styled } from "@mui/system";
+import { useAppDispatch } from "../app/hooks";
+import {
+  changeFinishedFetch,
+  deleteTodoFetch,
+} from "../features/todos/todoSlice";
 
 interface props {
   data: Todo;
-  handleDeleteItem: (parentId: number, itemId: number) => void;
-  handleCheckFinished: (parentId: number, itemId: number) => void;
 }
 
 const Item = styled(Paper)(() => ({
@@ -15,7 +18,9 @@ const Item = styled(Paper)(() => ({
   width: "50vw",
 }));
 
-const TodoItem = ({ data, handleDeleteItem, handleCheckFinished }: props) => {
+const TodoItem = ({ data }: props) => {
+  const dispatch = useAppDispatch();
+
   return (
     <Item>
       <Box sx={{ textDecoration: data.finished ? "line-through" : "none" }}>
@@ -25,11 +30,27 @@ const TodoItem = ({ data, handleDeleteItem, handleCheckFinished }: props) => {
         <Typography>{data.finished ? "Finished" : "Unfinished"}</Typography>
         <Box width="100%">
           <IconButton
-            onClick={() => handleDeleteItem(data.todoslistId, data.id)}
+            onClick={() =>
+              dispatch(
+                deleteTodoFetch({
+                  id: data.id,
+                  todoslistId: data.todoslistId,
+                } as TodoDeletePayload)
+              )
+            }
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton onClick={() => handleCheckFinished(data.todoslistId, data.id)}>
+          <IconButton
+            onClick={() =>
+              dispatch(
+                changeFinishedFetch({
+                  id: data.id,
+                  todoslistId: data.todoslistId,
+                } as TodoChangeFinishedPayload)
+              )
+            }
+          >
             <CheckIcon />
           </IconButton>
         </Box>

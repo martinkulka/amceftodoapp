@@ -1,13 +1,14 @@
 import { Box, Button, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import { useAppDispatch } from "../app/hooks";
+import { addListFetch } from "../features/todolists/todoListSlice";
 
-interface props {
-  handleCreateList: (listName: string) => void;
-}
-
-const TodoListForm = ({ handleCreateList }: props) => {
+const TodoListForm = () => {
+  const dispatch = useAppDispatch();
   const { control, handleSubmit } = useForm();
-  const onSubmit = handleSubmit((data) => handleCreateList(data.listName));
+  const onSubmit = handleSubmit((data) =>
+    dispatch(addListFetch(data.listName))
+  );
 
   return (
     <form onSubmit={onSubmit}>

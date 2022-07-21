@@ -1,41 +1,21 @@
 import DeleteIcon from "@mui/icons-material/DeleteTwoTone";
 import { Box, IconButton, Link } from "@mui/material";
-import { useEffect, useState } from "react";
-import gsAxios from "../api";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {
+  deleteListFetch,
+  getListsFetch,
+} from "../features/todolists/todoListSlice";
 import { TodosList } from "../types";
 import TodoListForm from "./TodoListForm";
 
 const TodosLists = () => {
-  const [lists, setLists] = useState<TodosList[]>([]);
+  const dispatch = useAppDispatch();
+  const lists = useAppSelector((state) => state.todolists.lists) as TodosList[];
 
   useEffect(() => {
-    fetchLists();
-  }, []);
-
-  const fetchLists = () => {
-    gsAxios.get<TodosList[]>("/todoslist").then((response) => {
-      console.log(response.data);
-      setLists(response.data);
-    });
-  };
-
-  const handleCreateList = (name: string) => {
-    gsAxios
-      .post<TodosList>("/todoslist", {
-        name,
-      })
-      .then((response) => {
-        console.log(response.data);
-        fetchLists();
-      });
-  };
-
-  const handleDeleteList = (id: number) => {
-    gsAxios.delete<TodosList>(`/todoslist/${id}`).then((response) => {
-      console.log(response.data);
-      fetchLists();
-    });
-  };
+    dispatch(getListsFetch());
+  }, [dispatch]);
 
   return (
     <Box
@@ -53,13 +33,15 @@ const TodosLists = () => {
               <Link href={`/${todoList.id}`} variant="h4">
                 {todoList.name}
               </Link>
-              <IconButton onClick={() => handleDeleteList(todoList.id)}>
+              <IconButton
+                onClick={() => dispatch(deleteListFetch(todoList.id))}
+              >
                 <DeleteIcon />
               </IconButton>
             </Box>
           );
         })}
-        <TodoListForm handleCreateList={handleCreateList} />
+        <TodoListForm />
       </Box>
     </Box>
   );

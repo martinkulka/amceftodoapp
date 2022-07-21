@@ -9,8 +9,16 @@ export interface Todo {
 
 export interface TodosList {
     name: string;
-    todos: Todo[];
     id: number;
 }
+
+export interface TodoDeletePayload {
+    id: number;
+    todoslistId: number;
+}
+
+export type TodoChangeFinishedPayload = TodoDeletePayload;
+
+export type TodoAddPayload = Omit<Todo, "finished" | "id">
 
 export type TodoFilter = "all" | "finished" | "unfinished"
