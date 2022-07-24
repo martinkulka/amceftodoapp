@@ -1,4 +1,4 @@
 # amceftodoapp
 amcef todo app test
 
-hours spent: 15
+hours spent: 25

@@ -18,7 +18,5 @@ export interface TodoDeletePayload {
 }
 
 export type TodoChangeFinishedPayload = TodoDeletePayload;
-
 export type TodoAddPayload = Omit<Todo, "finished" | "id">
-
 export type TodoFilter = "all" | "finished" | "unfinished"
